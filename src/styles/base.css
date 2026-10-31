@@ -175,6 +175,7 @@
 }
 
 body {
+  @apply bg-light-gradient;
   font-family: var(--font-sans);
   color: var(--color-neutral-900);
 

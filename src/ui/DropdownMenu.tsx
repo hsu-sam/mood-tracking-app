@@ -70,7 +70,7 @@ export function DropdownMenu({
             type="button"
             onClick={onSettings}
             className={clsx(
-              "flex w-full items-center gap-5",
+              "flex w-full items-center gap-125",
               "text-preset-7 text-neutral-900",
               "transition-colors outline-none",
             )}
@@ -91,7 +91,7 @@ export function DropdownMenu({
             type="button"
             onClick={onLogout}
             className={clsx(
-              "flex w-full items-center gap-5",
+              "flex w-full items-center gap-125",
               "text-preset-7 text-neutral-900",
               "transition-colors outline-none",
             )}
