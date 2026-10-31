@@ -1,0 +1,18 @@
+@import "./base.css";
+
+h1 {
+}
+
+h2 {
+}
+
+h3 {
+}
+
+*:disabled {
+  cursor: not-allowed;
+}
+
+img {
+  max-width: 100%;
+}
