@@ -12,8 +12,8 @@ export function Stepper({
   steps,
   currentStep,
   className,
-  activeColor = "bg-[#4D65E8]",
-  inactiveColor = "bg-[#DDE4FA]",
+  activeColor = "bg-blue-600",
+  inactiveColor = "bg-blue-200",
 }: StepperProps) {
   return (
     <div
@@ -32,7 +32,7 @@ export function Stepper({
           <div
             key={stepNumber}
             className={clsx(
-              "h-1 rounded-full transition-colors duration-300",
+              "h-075 rounded-full transition-colors duration-300",
               isActive ? activeColor : inactiveColor,
             )}
           />

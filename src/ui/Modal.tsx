@@ -7,6 +7,8 @@ import {
 import clsx from "clsx";
 import type { ReactNode } from "react";
 
+import Close from "../assets/icons/icon-close.svg";
+
 interface ModalProps {
   open: boolean;
   onClose: () => void;
@@ -57,38 +59,29 @@ export function Modal({
           >
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="mb-6 flex items-center justify-between gap-4">
-                {title ? (
-                  <DialogTitle className="text-xl font-semibold text-[#22234F]">
-                    {title}
-                  </DialogTitle>
-                ) : (
-                  <div />
-                )}
-
+              <div className="flex flex-col items-center">
                 {showCloseButton && (
                   <button
                     type="button"
                     onClick={onClose}
                     aria-label="Close modal"
                     className={clsx(
-                      "rounded-md p-1 text-[#9294BE]",
-                      "transition-colors hover:text-[#22234F]",
+                      "self-end text-neutral-300",
+                      "transition-colors hover:text-neutral-900",
                       "focus-visible:outline-none",
-                      "focus-visible:ring-2 focus-visible:ring-[#4D65E8]",
+                      "focus-visible:ring-2 focus-visible:ring-blue-600",
                     )}
                   >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="size-5"
-                      aria-hidden="true"
-                    >
-                      <path d="m6 6 12 12M18 6 6 18" />
-                    </svg>
+                    <img src={Close} alt="" />
                   </button>
+                )}
+
+                {title ? (
+                  <DialogTitle className="text-preset-2 self-start">
+                    {title}
+                  </DialogTitle>
+                ) : (
+                  <div />
                 )}
               </div>
             )}
