@@ -3,6 +3,7 @@ import {
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
+  Description,
 } from "@headlessui/react";
 import clsx from "clsx";
 import type { ReactNode } from "react";
@@ -13,6 +14,7 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
+  description?: string;
   children: ReactNode;
   className?: string;
   showCloseButton?: boolean;
@@ -23,6 +25,7 @@ export function Modal({
   open,
   onClose,
   title,
+  description,
   children,
   className,
   showCloseButton = true,
@@ -38,7 +41,7 @@ export function Modal({
       <DialogBackdrop
         transition
         className={clsx(
-          "fixed inset-0 bg-[#22234F]/60 backdrop-blur-sm",
+          "backdrop-blur-100 fixed inset-0 bg-neutral-900/40",
           "transition-opacity duration-300",
           "data-closed:opacity-0",
         )}
@@ -80,6 +83,14 @@ export function Modal({
                   <DialogTitle className="text-preset-2 self-start">
                     {title}
                   </DialogTitle>
+                ) : (
+                  <div />
+                )}
+
+                {description ? (
+                  <Description className="text-preset-6-regular self-start text-neutral-600">
+                    {description}
+                  </Description>
                 ) : (
                   <div />
                 )}
