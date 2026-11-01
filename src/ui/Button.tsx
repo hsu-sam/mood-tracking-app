@@ -17,6 +17,7 @@ interface ButtonProps {
   className?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
+  onClick?: () => void;
 }
 
 const variants: Record<ButtonVariant, string> = {
@@ -43,6 +44,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       disabled = false,
       type = "button",
+      onClick,
     },
     ref,
   ) => {
@@ -53,6 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         type={type}
         disabled={isDisabled}
+        onClick={onClick}
         aria-busy={isLoading}
         className={clsx(
           "inline-flex items-center justify-center gap-2",

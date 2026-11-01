@@ -51,7 +51,7 @@ export function Modal({
             transition
             className={clsx(
               "relative w-full max-w-lg rounded-2xl bg-white",
-              "p-6 shadow-xl sm:p-8",
+              "flex flex-col gap-400 p-6 shadow-xl sm:p-8",
               "transition duration-300 ease-out",
               "data-closed:scale-95 data-closed:opacity-0",
               className,

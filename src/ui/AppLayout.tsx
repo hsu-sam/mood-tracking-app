@@ -1,26 +1,19 @@
-import { Button } from "./Button";
+import AverageMood from "../components/AverageMood";
 import Header from "./Header";
+import Main from "./Main";
 
 export default function AppLayout() {
   return (
-    <div className="m-auto max-w-292.5">
+    <div className="m-auto flex max-w-292.5 flex-col gap-1000">
       <div className="flex flex-col gap-800 pt-500">
         <Header />
 
-        <div className="flex flex-col items-center gap-125">
-          <p className="text-preset-3 text-blue-600">Hello, Lisa!</p>
-
-          <h1 className="">How are you feeling today?</h1>
-
-          <p className="text-preset-6 text-neutral-600">
-            Wednesday, April 16th, 2025
-          </p>
-        </div>
-
-        <Button className="w-fit self-center">Log today's mood</Button>
+        <Main />
       </div>
 
-      <div></div>
+      <div>
+        <AverageMood />
+      </div>
     </div>
   );
 }

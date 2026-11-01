@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { forwardRef, type ReactNode } from "react";
 
 interface TagCheckboxProps {
+  children: ReactNode;
   label: ReactNode;
   checked?: boolean;
   defaultChecked?: boolean;
@@ -16,6 +17,7 @@ interface TagCheckboxProps {
 export const TagCheckbox = forwardRef<HTMLSpanElement, TagCheckboxProps>(
   (
     {
+      children,
       label,
       checked,
       defaultChecked,
@@ -92,6 +94,7 @@ export const TagCheckbox = forwardRef<HTMLSpanElement, TagCheckboxProps>(
 
         {/* Label */}
         <span className="text-preset-6-regular leading-none">{label}</span>
+        {children}
       </HeadlessCheckbox>
     );
   },
