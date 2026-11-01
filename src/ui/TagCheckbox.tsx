@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { forwardRef, type ReactNode } from "react";
 
 interface TagCheckboxProps {
-  children: ReactNode;
+  children?: ReactNode;
   label: ReactNode;
   checked?: boolean;
   defaultChecked?: boolean;
