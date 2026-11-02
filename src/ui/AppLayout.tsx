@@ -1,4 +1,5 @@
 import AverageMood from "../components/AverageMood";
+import Container from "./Container";
 import Header from "./Header";
 import Main from "./Main";
 
@@ -11,7 +12,8 @@ export default function AppLayout() {
         <Main />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-400">
+        <Container />
         <AverageMood />
       </div>
     </div>

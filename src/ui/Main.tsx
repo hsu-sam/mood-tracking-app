@@ -17,12 +17,12 @@ function Main() {
         </p>
       </div>
 
-      <Button
+      {/* <Button
         className="w-fit self-center"
         onClick={() => setIsModalOpen(true)}
       >
         Log today's mood
-      </Button>
+      </Button> */}
 
       <AddMoodmodal
         isOpen={isModalOpen}
