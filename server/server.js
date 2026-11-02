@@ -1,18 +1,23 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const connectDB = async () => {
-  try {
-    const uri = process.env.DATABASE.replace(
-      '<PASSWORD>',
-      encodeURIComponent(process.env.DATABASE_PASSWORD),
-    );
+async function connectDB() {
+  const { DATABASE, DATABASE_PASSWORD } = process.env;
 
-    await mongoose.connect(uri);
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection failed:', err.message);
-    process.exit(1);
+  if (!DATABASE) {
+    throw new Error('DATABASE is not set in the environment');
   }
-};
 
-module.exports = connectDB;
+  if (!DATABASE_PASSWORD) {
+    throw new Error('DATABASE_PASSWORD is not set in the environment');
+  }
+
+  const uri = DATABASE.replace(
+    '<PASSWORD>',
+    encodeURIComponent(DATABASE_PASSWORD),
+  );
+
+  await mongoose.connect(uri);
+  console.log('MongoDB connected');
+}
+
+export default connectDB;
