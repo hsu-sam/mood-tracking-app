@@ -10,6 +10,9 @@ h2 {
 }
 
 h3 {
+  font-size: var(--text-preset-3);
+  font-weight: var(--text-preset-3--font-weight);
+  line-height: var(--text-preset-3--line-height);
 }
 
 *:disabled {

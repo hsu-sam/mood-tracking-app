@@ -6,7 +6,7 @@ import VeryHappyEmoji from "../assets/icons/icon-very-happy-color.svg";
 function Container() {
   return (
     <section className="grid grid-cols-5 gap-400">
-      <div className="bg-neutral-0 rounded-16 relative col-span-3 grid min-w-0 flex-1 grid-cols-1 overflow-hidden border border-blue-100 p-400 text-center md:min-h-[340px] md:grid-cols-[1fr_1fr] md:text-left">
+      <div className="bg-neutral-0 rounded-16 relative col-span-3 grid min-w-0 flex-1 grid-cols-1 overflow-hidden border border-blue-100 p-400 text-center md:min-h-85 md:grid-cols-[1fr_1fr] md:text-left">
         {/* Heading */}
         <div className="relative z-10 md:col-start-1 md:row-start-1">
           <p className="text-preset-3 text-neutral-300">I’m feeling</p>
