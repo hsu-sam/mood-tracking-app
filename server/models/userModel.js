@@ -22,16 +22,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
   passwordConfirm: {
     type: String,
-    required: true,
+    required: false,
     validate: {
       validator: function (el) {
         return el === this.password;
       },
       message: 'Passwords are not the same!',
     },
+    select: false,
   },
   createdAt: {
     type: Date,
@@ -49,6 +51,13 @@ userSchema.pre('save', async function () {
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 

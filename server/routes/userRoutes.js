@@ -1,6 +1,7 @@
 import express from 'express';
-import { signup } from '../controllers/authController.js';
+import { signup, login } from '../controllers/authController.js';
 import {
+  getAllUsers,
   getUser,
   createUser,
   updateUser,
@@ -10,8 +11,9 @@ import {
 const router = express.Router();
 
 router.post('/signup', signup);
+router.post('/login', login);
 
-router.route('/').get(getUser).post(createUser);
+router.route('/').get(getAllUsers).get(getUser).post(createUser);
 
 router.route('/:id').patch(updateUser).delete(deleteUser);
 
