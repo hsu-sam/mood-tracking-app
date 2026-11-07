@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   fullName: {
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8,
   },
-  confirmPassword: {
+  passwordConfirm: {
     type: String,
     required: true,
     validate: {
@@ -36,6 +37,17 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+userSchema.pre('save', async function () {
+  // Only hash the password if it was modified
+  if (!this.isModified('password')) return;
+
+  // Hash the password with a cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete passwordConfirm field
+  this.passwordConfirm = undefined;
 });
 
 const User = mongoose.model('User', userSchema);

@@ -6,6 +6,7 @@ export const signup = catchAsync(async (req, res, next) => {
     fullName: req.body.fullName,
     email: req.body.email,
     password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
   });
 
   res.status(201).json({
