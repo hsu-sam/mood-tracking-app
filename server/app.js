@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import connectDB from './server.js';
 import userRouter from './routes/userRoutes.js';
+import moodRouter from './routes/moodRoutes.js';
 import AppError from './utils/appError.js';
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.json());
 
 // ROUTES
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/moods', moodRouter);
 
 // GLOBAL 404 HANDLER
 app.use((req, res, next) => {

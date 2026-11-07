@@ -1,4 +1,4 @@
-exports.FEELINGS = [
+export const FEELINGS = [
   'Joyful',
   'Motivated',
   'Hopeful',
@@ -19,7 +19,7 @@ exports.FEELINGS = [
   'Anxious',
 ];
 
-exports.MOODS = {
+export const MOODS = {
   VERY_SAD: -2,
   SAD: -1,
   NEUTRAL: 0,
@@ -27,7 +27,7 @@ exports.MOODS = {
   VERY_HAPPY: 2,
 };
 
-exports.MOOD_LABELS = {
+export const MOOD_LABELS = {
   '-2': 'Very Sad',
   '-1': 'Sad',
   0: 'Neutral',
@@ -35,7 +35,7 @@ exports.MOOD_LABELS = {
   2: 'Very Happy',
 };
 
-exports.SLEEP_LABELS = {
+export const SLEEP_LABELS = {
   1: '0-2 hours',
   3.5: '3-4 hours',
   5.5: '5-6 hours',
@@ -43,5 +43,5 @@ exports.SLEEP_LABELS = {
   9: '9+ hours',
 };
 
-exports.MOOD_VALUES = Object.values(exports.MOODS);
-exports.SLEEP_VALUES = [1, 3.5, 5.5, 7.5, 9];
+export const MOOD_VALUES = Object.values(MOODS);
+export const SLEEP_VALUES = [1, 3.5, 5.5, 7.5, 9];
