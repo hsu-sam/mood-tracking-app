@@ -12,6 +12,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  updateMe,
 } from '../controllers/userController.js';
 import { protect, restrictTo } from '../controllers/authController.js';
 
@@ -29,6 +30,7 @@ router
   .get(restrictTo('admin'), getAllUsers)
   .get(getUser)
   .post(createUser);
+router.patch('/update-me', updateMe);
 router.patch('/update-password', updatePassword);
 router.route('/:id').patch(updateUser).delete(restrictTo('admin'), deleteUser);
 

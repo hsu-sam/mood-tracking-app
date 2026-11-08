@@ -1,4 +1,14 @@
 import User from '../models/userModel.js';
+import AppError from '../utils/appError.js';
+import catchAsync from '../utils/catchAsync.js';
+
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
 
 export const getAllUsers = async (req, res) => {
   const Users = await User.find();
@@ -11,6 +21,26 @@ export const getAllUsers = async (req, res) => {
     },
   });
 };
+
+export const updateMe = catchAsync(async (req, res) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new AppError("You can't update your password here.", 400));
+  }
+
+  const filteredBody = filterObj(req.body, 'fullName', 'photo');
+
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
 
 export const getUser = (req, res) => {
   res.status(500).json({
