@@ -9,7 +9,7 @@ import {
   updateMood,
   deleteMood,
 } from '../controllers/moodController.js';
-import { protect } from '../controllers/authController.js';
+import { protect, restrictTo } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -19,6 +19,10 @@ router.route('/').get(getAllMoods).post(createMood);
 router.get('/today', getToday);
 router.get('/recent', getRecent);
 router.get('/averages', getAverages);
-router.route('/:id').get(getMood).patch(updateMood).delete(deleteMood);
+router
+  .route('/:id')
+  .get(getMood)
+  .patch(restrictTo('admin'), updateMood)
+  .delete(restrictTo('admin'), deleteMood);
 
 export default router;

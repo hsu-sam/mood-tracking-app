@@ -7,7 +7,7 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/userController.js';
-import { protect } from '../controllers/authController.js';
+import { protect, restrictTo } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -16,7 +16,11 @@ router.post('/login', login);
 
 router.use(protect);
 
-router.route('/').get(getAllUsers).get(getUser).post(createUser);
-router.route('/:id').patch(updateUser).delete(deleteUser);
+router
+  .route('/')
+  .get(restrictTo('admin'), getAllUsers)
+  .get(getUser)
+  .post(createUser);
+router.route('/:id').patch(updateUser).delete(restrictTo('admin'), deleteUser);
 
 export default router;
