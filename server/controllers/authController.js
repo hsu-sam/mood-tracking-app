@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { promisify } from 'node:util';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
@@ -145,4 +146,28 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-export const resetPassword = catchAsync(async (req, res, next) => {});
+export const resetPassword = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordRestExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 400));
+  }
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordRestExpires = undefined;
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Your password has been reset successfully.',
+  });
+});
