@@ -9,8 +9,11 @@ import {
   updateMood,
   deleteMood,
 } from '../controllers/moodController.js';
+import { protect } from '../controllers/authController.js';
 
 const router = express.Router();
+
+router.use(protect);
 
 router.route('/').get(getAllMoods).post(createMood);
 router.get('/today', getToday);

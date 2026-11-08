@@ -4,10 +4,25 @@ import connectDB from './server.js';
 import userRouter from './routes/userRoutes.js';
 import moodRouter from './routes/moodRoutes.js';
 import AppError from './utils/appError.js';
+import globalErrorHandler from './controllers/errorController.js';
 
 const app = express();
 
 const port = process.env.PORT || 3000;
+
+// MIDDLEWARE
+app.use(express.json());
+
+// ROUTES
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/moods', moodRouter);
+
+// GLOBAL 404 HANDLER
+app.use((req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
 
 async function startServer() {
   await connectDB();
@@ -20,15 +35,4 @@ async function startServer() {
 startServer().catch((error) => {
   console.error('Server startup failed:', error.message);
   process.exitCode = 1;
-});
-// MIDDLEWARE
-app.use(express.json());
-
-// ROUTES
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/moods', moodRouter);
-
-// GLOBAL 404 HANDLER
-app.use((req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

@@ -56,6 +56,7 @@ const moodSchema = new mongoose.Schema(
   },
 );
 
+// One entry per user per day, and fast "latest N" queries for the chart
 moodSchema.index({ user: 1, entryDate: -1 }, { unique: true });
 
 moodSchema.virtual('moodLabel').get(function () {
