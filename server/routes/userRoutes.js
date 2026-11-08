@@ -4,6 +4,7 @@ import {
   login,
   forgotPassword,
   resetPassword,
+  updatePassword,
 } from '../controllers/authController.js';
 import {
   getAllUsers,
@@ -28,6 +29,7 @@ router
   .get(restrictTo('admin'), getAllUsers)
   .get(getUser)
   .post(createUser);
+router.patch('/update-password', updatePassword);
 router.route('/:id').patch(updateUser).delete(restrictTo('admin'), deleteUser);
 
 export default router;

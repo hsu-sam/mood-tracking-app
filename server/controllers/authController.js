@@ -171,3 +171,28 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     message: 'Your password has been reset successfully.',
   });
 });
+
+export const updatePassword = catchAsync(async (req, res, next) => {
+  const { passwordCurrent, password, passwordConfirm } = req.body;
+
+  if (!passwordCurrent || !password || !passwordConfirm) {
+    return next(new AppError('Please provide all password fields.', 400));
+  }
+
+  const user = await User.findById(req.user.id).select('+password');
+
+  if (!user || !(await user.correctPassword(passwordCurrent, user.password))) {
+    return next(new AppError('Your current password is wrong.', 401));
+  }
+
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  await user.save();
+
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
+});
