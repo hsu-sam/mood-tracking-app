@@ -9,9 +9,6 @@ import {
 } from '../controllers/authController.js';
 import {
   getAllUsers,
-  getUser,
-  createUser,
-  updateUser,
   deleteUser,
   updateMe,
 } from '../controllers/userController.js';
@@ -26,14 +23,10 @@ router.patch('/reset-password/:token', resetPassword);
 
 router.use(protect);
 
-router
-  .route('/')
-  .get(restrictTo('admin'), getAllUsers)
-  .get(getUser)
-  .post(createUser);
+router.route('/').get(restrictTo('admin'), getAllUsers);
 router.patch('/onboarding', onboarding);
 router.patch('/update-me', updateMe);
 router.patch('/update-password', updatePassword);
-router.route('/:id').patch(updateUser).delete(restrictTo('admin'), deleteUser);
+router.route('/:id').delete(restrictTo('admin'), deleteUser);
 
 export default router;

@@ -4,6 +4,7 @@ import catchAsync from '../utils/catchAsync.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import { getQuote } from '../utils/qoutes.js';
 import { MOOD_LABELS, SLEEP_LABELS } from '../models/constants.js';
+import AppError from '../utils/appError.js';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const invalidId = (res) => res.status(400).json({ error: 'Invalid id' });
@@ -17,6 +18,11 @@ const withLabels = (e) => ({
 const latestAllowedDate = () =>
   new Date(Date.now() + 14 * 3600 * 1000).toISOString().slice(0, 10);
 
+const canAccessMoodEntry = (req, entry) => {
+  if (req.user.role === 'admin') return true;
+  return entry.user.toString() === req.user._id.toString();
+};
+
 // Average rounded to 2 decimals, or null for an empty list
 const avg = (arr, key) =>
   arr.length
@@ -25,15 +31,13 @@ const avg = (arr, key) =>
     : null;
 
 // GET /api/moods?entryDate[gte]=2026-11-01&mood=1&sort=-entryDate&page=1&limit=20
-export const getAllMoods = catchAsync(async (req, res) => {
-  const features = new APIFeatures(
-    MoodEntry.find({ user: req.user._id }),
-    req.query,
-    {
-      filterable: ['entryDate', 'mood', 'sleepHours', 'feelings'],
-      defaultSort: '-entryDate',
-    },
-  )
+export const getAllMoods = catchAsync(async (req, res, next) => {
+  const filter = req.user.role === 'admin' ? {} : { user: req.user._id };
+
+  const features = new APIFeatures(MoodEntry.find(filter), req.query, {
+    filterable: ['entryDate', 'mood', 'sleepHours', 'feelings'],
+    defaultSort: '-entryDate',
+  })
     .filter()
     .sort()
     .limitFields()
@@ -140,15 +144,18 @@ export const getAverages = catchAsync(async (req, res) => {
 });
 
 // GET /api/moods/:id
-export const getMood = catchAsync(async (req, res) => {
+export const getMood = catchAsync(async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.id)) return invalidId(res);
 
-  const entry = await MoodEntry.findOne({
-    _id: req.params.id,
-    user: req.user._id,
-  }).lean();
+  const entry = await MoodEntry.findById(req.params.id).lean();
 
   if (!entry) return res.status(404).json({ error: 'Entry not found' });
+
+  if (!canAccessMoodEntry(req, entry)) {
+    return next(
+      new AppError('You do not have permission to view this mood entry', 403),
+    );
+  }
 
   res.status(200).json({
     entry: withLabels(entry),
@@ -157,14 +164,17 @@ export const getMood = catchAsync(async (req, res) => {
 });
 
 // PATCH /api/moods/:id
-export const updateMood = catchAsync(async (req, res) => {
+export const updateMood = catchAsync(async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.id)) return invalidId(res);
 
-  const entry = await MoodEntry.findOne({
-    _id: req.params.id,
-    user: req.user._id,
-  });
+  const entry = await MoodEntry.findById(req.params.id);
   if (!entry) return res.status(404).json({ error: 'Entry not found' });
+
+  if (!canAccessMoodEntry(req, entry)) {
+    return next(
+      new AppError('You do not have permission to update this mood entry', 403),
+    );
+  }
 
   // Only these fields can change. user and entryDate are locked.
   for (const key of ['mood', 'feelings', 'sleepHours', 'journal']) {
@@ -187,14 +197,19 @@ export const updateMood = catchAsync(async (req, res) => {
 });
 
 // DELETE /api/moods/:id
-export const deleteMood = catchAsync(async (req, res) => {
+export const deleteMood = catchAsync(async (req, res, next) => {
   if (!mongoose.isValidObjectId(req.params.id)) return invalidId(res);
 
-  const entry = await MoodEntry.findOneAndDelete({
-    _id: req.params.id,
-    user: req.user._id,
-  });
+  const entry = await MoodEntry.findById(req.params.id);
   if (!entry) return res.status(404).json({ error: 'Entry not found' });
+
+  if (!canAccessMoodEntry(req, entry)) {
+    return next(
+      new AppError('You do not have permission to delete this mood entry', 403),
+    );
+  }
+
+  await MoodEntry.findByIdAndDelete(req.params.id);
 
   res.status(204).send();
 });

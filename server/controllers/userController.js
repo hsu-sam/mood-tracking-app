@@ -10,19 +10,25 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-export const getAllUsers = async (req, res) => {
-  const Users = await User.find();
+export const getAllUsers = catchAsync(async (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return next(
+      new AppError('You do not have permission to access all users', 403),
+    );
+  }
+
+  const users = await User.find();
 
   res.status(200).json({
     status: 'success',
-    results: Users.length,
+    results: users.length,
     data: {
-      Users,
+      users,
     },
   });
-};
+});
 
-export const updateMe = catchAsync(async (req, res) => {
+export const updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError("You can't update your password here.", 400));
   }
@@ -60,9 +66,18 @@ export const updateUser = (req, res) => {
     message: 'This route is not yet defined!',
   });
 };
-export const deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
+export const deleteUser = catchAsync(async (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return next(
+      new AppError('You do not have permission to delete users', 403),
+    );
+  }
+
+  const user = await User.findByIdAndDelete(req.params.id);
+
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  res.status(204).send();
+});

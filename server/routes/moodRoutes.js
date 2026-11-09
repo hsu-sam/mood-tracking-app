@@ -22,7 +22,7 @@ router.get('/averages', getAverages);
 router
   .route('/:id')
   .get(getMood)
-  .patch(restrictTo('admin'), updateMood)
-  .delete(restrictTo('admin'), deleteMood);
+  .patch(updateMood)
+  .delete(deleteMood);
 
 export default router;
