@@ -6,7 +6,6 @@ import bcrypt from 'bcryptjs';
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: [true, 'Please provide your full name'],
   },
   email: {
     type: String,
@@ -17,7 +16,6 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: 'default.jpg',
   },
   role: {
     type: String,
@@ -32,9 +30,10 @@ const userSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'Please confirm your password'],
     validate: {
       validator: function (el) {
+        // Only validate when passwordConfirm is provided (reset/update flows)
+        if (!el) return true;
         return el === this.password;
       },
       message: 'Passwords are not the same!',
@@ -61,11 +60,10 @@ userSchema.pre('save', async function () {
   this.passwordConfirm = undefined;
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', async function () {
   if (!this.isModified('password') || !this.isNew) return;
 
   this.passwordChangedAt = Date.now() - 1000;
-  next();
 });
 
 userSchema.methods.correctPassword = async function (

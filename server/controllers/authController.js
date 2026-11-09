@@ -14,10 +14,11 @@ const signToken = (id) => {
 
 export const signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
-    fullName: req.body.fullName,
     email: req.body.email,
     password: req.body.password,
   });
+
+  newUser.password = undefined;
 
   res.status(201).json({
     status: 'success',
@@ -46,9 +47,48 @@ export const login = catchAsync(async (req, res, next) => {
   // Create and send token;
   const token = signToken(user._id);
 
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() +
+        Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
   res.status(200).json({
     status: 'success',
     token,
+  });
+});
+
+export const onboarding = catchAsync(async (req, res, next) => {
+  const { fullName, photo } = req.body;
+
+  if (!fullName || !fullName.trim()) {
+    return next(new AppError('Please provide your name', 400));
+  }
+
+  if (photo !== undefined && photo !== null) {
+    if (typeof photo !== 'string' || !/^https:\/\/.+/.test(photo)) {
+      return next(new AppError('photo must be an https URL', 400));
+    }
+  }
+
+  const updates = { fullName: fullName.trim() };
+  if (photo) updates.photo = photo;
+
+  const user = await User.findByIdAndUpdate(req.user.id, updates, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: { user },
   });
 });
 
