@@ -14,6 +14,8 @@ import morgan from 'morgan';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 
+import compression from 'compression';
+
 const app = express();
 
 app.set('view engine', 'pug');
@@ -79,6 +81,8 @@ app.use((req, res, next) => {
   // console.log(req.headers);
   next();
 });
+
+app.use(compression());
 
 // ROUTES
 app.get('/', (req, res) => {
