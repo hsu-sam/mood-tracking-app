@@ -87,4 +87,11 @@ export class Email {
   async sendPasswordReset() {
     await this.send('reset-password', 'Reset your Mood Tracker password');
   }
+
+  async sendPasswordChanged() {
+    await this.send(
+      'password-changed',
+      'Your Mood Tracker password has been reset',
+    );
+  }
 }

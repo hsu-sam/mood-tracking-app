@@ -20,10 +20,14 @@ const getClientUrl = () => {
   return clientUrl;
 };
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+const signToken = (user) => {
+  return jwt.sign(
+    { id: user._id, tokenVersion: user.tokenVersion ?? 0 },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    },
+  );
 };
 
 export const signup = catchAsync(async (req, res, next) => {
@@ -61,14 +65,14 @@ export const login = catchAsync(async (req, res, next) => {
   }
 
   // Check if user exists && password is correct
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select('+password +tokenVersion');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
   // Create and send token;
-  const token = signToken(user._id);
+  const token = signToken(user);
 
   const cookieOptions = {
     expires: new Date(
@@ -85,6 +89,22 @@ export const login = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     token,
+  });
+});
+
+export const logout = catchAsync(async (req, res) => {
+  req.user.tokenVersion = (req.user.tokenVersion ?? 0) + 1;
+  await req.user.save({ validateBeforeSave: false });
+
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Logged out successfully.',
   });
 });
 
@@ -135,13 +155,19 @@ export const protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3) Check if user still exists
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(decoded.id).select('+tokenVersion');
   if (!currentUser) {
     return next(
       new AppError(
         'The user belonging to this token does no longer exist.',
         401,
       ),
+    );
+  }
+
+  if ((decoded.tokenVersion ?? 0) !== (currentUser.tokenVersion ?? 0)) {
+    return next(
+      new AppError('Your session has ended. Please log in again.', 401),
     );
   }
 
@@ -213,7 +239,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordRestExpires: { $gt: Date.now() },
-  });
+  }).select('+tokenVersion');
 
   if (!user) {
     return next(new AppError('Token is invalid or has expired', 400));
@@ -222,11 +248,27 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordRestExpires = undefined;
+  user.tokenVersion = (user.tokenVersion ?? 0) + 1;
   await user.save();
+
+  let emailSent = true;
+  try {
+    const loginURL = new URL('/login', getClientUrl()).toString();
+    await new Email(user, loginURL).sendPasswordChanged();
+  } catch (error) {
+    emailSent = false;
+    console.error(
+      'Password reset confirmation email could not be sent:',
+      error.message,
+    );
+  }
 
   res.status(200).json({
     status: 'success',
-    message: 'Your password has been reset successfully.',
+    message: emailSent
+      ? 'Password reset successfully. You can now log in with your new password.'
+      : 'Password reset successfully. You can now log in with your new password, but we could not send the confirmation email.',
+    emailSent,
   });
 });
 
@@ -237,7 +279,9 @@ export const updatePassword = catchAsync(async (req, res, next) => {
     return next(new AppError('Please provide all password fields.', 400));
   }
 
-  const user = await User.findById(req.user.id).select('+password');
+  const user = await User.findById(req.user.id).select(
+    '+password +tokenVersion',
+  );
 
   if (!user || !(await user.correctPassword(passwordCurrent, user.password))) {
     return next(new AppError('Your current password is wrong.', 401));
@@ -247,7 +291,7 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = passwordConfirm;
   await user.save();
 
-  const token = signToken(user._id);
+  const token = signToken(user);
 
   res.status(200).json({
     status: 'success',

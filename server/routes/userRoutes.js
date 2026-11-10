@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
   signup,
   login,
+  logout,
   forgotPassword,
   resetPassword,
   updatePassword,
@@ -73,6 +74,7 @@ router.patch('/reset-password/:token', resetPassword);
 
 router.use(protect);
 
+router.post('/logout', logout);
 router.route('/').get(restrictTo('admin'), getAllUsers);
 router.get('/me', getMe);
 router.patch('/onboarding', onboarding);
