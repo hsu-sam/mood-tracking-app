@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import { parse } from 'node:querystring';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import connectDB from './server.js';
 import userRouter from './routes/userRoutes.js';
 import moodRouter from './routes/moodRoutes.js';
@@ -15,6 +17,7 @@ import hpp from 'hpp';
 const app = express();
 
 const port = process.env.PORT || 3000;
+const publicDirectory = fileURLToPath(new URL('./public/', import.meta.url));
 
 app.set('query parser', (queryString) =>
   ExpressMongoSanitize.sanitize(parse(queryString)),
@@ -62,6 +65,8 @@ app.use(
     ],
   }),
 );
+
+app.use('/img/users', express.static(path.join(publicDirectory, 'img/users')));
 
 app.use('/api', limiter);
 

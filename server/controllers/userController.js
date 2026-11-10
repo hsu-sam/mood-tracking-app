@@ -33,7 +33,28 @@ export const updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError("You can't update your password here.", 400));
   }
 
-  const filteredBody = filterObj(req.body, 'fullName', 'photo');
+  const filteredBody = filterObj(req.body, 'fullName');
+
+  if (
+    req.body.fullName !== undefined &&
+    typeof req.body.fullName !== 'string'
+  ) {
+    return next(new AppError('fullName must be a string', 400));
+  }
+
+  if (req.body.photo !== undefined) {
+    if (
+      typeof req.body.photo !== 'string' ||
+      !/^https:\/\/.+/.test(req.body.photo)
+    ) {
+      return next(new AppError('photo must be an https URL', 400));
+    }
+    filteredBody.photo = req.body.photo;
+  }
+
+  if (req.file) {
+    filteredBody.photo = `/img/users/${req.file.filename}`;
+  }
 
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
