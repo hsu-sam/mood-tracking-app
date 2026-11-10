@@ -15,6 +15,7 @@ import ExpressMongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 
 import compression from 'compression';
+import { validateEmailConfiguration } from './utils/email.js';
 
 const app = express();
 
@@ -100,6 +101,10 @@ app.use((req, res, next) => {
 app.use(globalErrorHandler);
 
 async function startServer() {
+  if (process.env.NODE_ENV === 'production') {
+    validateEmailConfiguration();
+  }
+
   await connectDB();
 
   app.listen(port, () => {

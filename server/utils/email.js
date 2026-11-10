@@ -9,6 +9,29 @@ const templatesDirectory = resolve(
   '../views/emails',
 );
 
+export function validateEmailConfiguration() {
+  const missing = ['SENDGRID_PASSWORD', 'EMAIL_FROM', 'CLIENT_URL'].filter(
+    (key) => !process.env[key],
+  );
+
+  if (missing.length) {
+    throw new Error(
+      `Missing production email configuration: ${missing.join(', ')}`,
+    );
+  }
+
+  let clientUrl;
+  try {
+    clientUrl = new URL(process.env.CLIENT_URL);
+  } catch {
+    throw new Error('CLIENT_URL must be a valid absolute URL');
+  }
+
+  if (clientUrl.protocol !== 'https:') {
+    throw new Error('CLIENT_URL must use HTTPS in production');
+  }
+}
+
 export class Email {
   constructor(user, url) {
     this.to = user.email;
@@ -28,8 +51,9 @@ export class Email {
 
     return nodemailer.createTransport({
       host: 'smtp.sendgrid.net',
-      port: 25,
+      port: 587,
       secure: false,
+      requireTLS: true,
       auth: {
         user: 'apikey',
         pass: SENDGRID_PASSWORD,
