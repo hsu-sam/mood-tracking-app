@@ -48,24 +48,15 @@ export const updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
+export const getMe = (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: req.user,
+    },
   });
 };
-export const createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
-export const updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
+
 export const deleteUser = catchAsync(async (req, res, next) => {
   if (req.user.role !== 'admin') {
     return next(

@@ -11,6 +11,7 @@ import {
   getAllUsers,
   deleteUser,
   updateMe,
+  getMe,
 } from '../controllers/userController.js';
 import { protect, restrictTo } from '../controllers/authController.js';
 
@@ -24,6 +25,7 @@ router.patch('/reset-password/:token', resetPassword);
 router.use(protect);
 
 router.route('/').get(restrictTo('admin'), getAllUsers);
+router.get('/me', getMe);
 router.patch('/onboarding', onboarding);
 router.patch('/update-me', updateMe);
 router.patch('/update-password', updatePassword);

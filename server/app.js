@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import { parse } from 'node:querystring';
 import connectDB from './server.js';
 import userRouter from './routes/userRoutes.js';
 import moodRouter from './routes/moodRoutes.js';
@@ -8,13 +9,16 @@ import globalErrorHandler from './controllers/errorController.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import xss from 'xss-clean';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 
 const app = express();
 
 const port = process.env.PORT || 3000;
+
+app.set('query parser', (queryString) =>
+  ExpressMongoSanitize.sanitize(parse(queryString)),
+);
 
 // MIDDLEWARE
 // Security HTTP headers
@@ -34,11 +38,13 @@ app.use(express.json());
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
 
-// Data sanitization against NoSQL query injection
-app.use(ExpressMongoSanitize());
-
-// Data sanitization against XSS
-app.use(xss());
+// Sanitize request data in place; Express 5 exposes req.query as read-only.
+app.use((req, res, next) => {
+  for (const key of ['body', 'params', 'headers']) {
+    if (req[key]) ExpressMongoSanitize.sanitize(req[key]);
+  }
+  next();
+});
 
 // Prevent parameter pollution
 app.use(
