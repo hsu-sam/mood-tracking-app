@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title= subject
+    include _style.pug
+  body
+    main.card
+      h1 Welcome to Mood Tracker
+      if fullName
+        p Hi #{fullName},
+      else
+        p Hello,
+      p Thanks for joining Mood Tracker. Your account is ready, and you can start recording your daily moods whenever you like.
+      a.button(href=url) Log in to Mood Tracker
+      p.muted If you did not create this account, you can ignore this email.

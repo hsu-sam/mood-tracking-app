@@ -1,24 +1,66 @@
+import { convert } from 'html-to-text';
 import nodemailer from 'nodemailer';
+import pug from 'pug';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const sendMail = async (options) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
+const templatesDirectory = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '../views/emails',
+);
 
-  const mailOptions = {
-    from: 'Samuel Hounsou <hello@gmail.com>',
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-    // httml: '',
-  };
+export class Email {
+  constructor(user, url) {
+    this.to = user.email;
+    this.fullName = user.fullName;
+    this.url = url;
+    this.from = process.env.EMAIL_FROM
+      ? `Mood Tracker <${process.env.EMAIL_FROM}>`
+      : undefined;
+  }
 
-  await transporter.sendMail(mailOptions);
-};
+  createTransport() {
+    const { SENDGRID_PASSWORD } = process.env;
 
-export default sendMail;
+    if (!this.from || !SENDGRID_PASSWORD) {
+      throw new Error('Email transport configuration is incomplete');
+    }
+
+    return nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 25,
+      secure: false,
+      auth: {
+        user: 'apikey',
+        pass: SENDGRID_PASSWORD,
+      },
+    });
+  }
+
+  async send(template, subject) {
+    const html = pug.renderFile(
+      resolve(templatesDirectory, `${template}.pug`),
+      {
+        fullName: this.fullName,
+        url: this.url,
+        subject,
+      },
+    );
+
+    await this.createTransport().sendMail({
+      from: this.from,
+      to: this.to,
+      subject,
+      html,
+      text: convert(html),
+    });
+  }
+
+  async sendWelcome() {
+    await this.send('welcome', 'Welcome to Mood Tracker');
+  }
+
+  async sendPasswordReset() {
+    await this.send('reset-password', 'Reset your Mood Tracker password');
+  }
+}

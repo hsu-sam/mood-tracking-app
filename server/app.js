@@ -16,6 +16,9 @@ import hpp from 'hpp';
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', fileURLToPath(new URL('./views/', import.meta.url)));
+
 const port = process.env.PORT || 3000;
 const publicDirectory = fileURLToPath(new URL('./public/', import.meta.url));
 
@@ -78,6 +81,10 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
+
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/moods', moodRouter);
 

@@ -4,7 +4,21 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
-import sendMail from '../utils/email.js';
+import { Email } from '../utils/email.js';
+
+const getClientUrl = () => {
+  const clientUrl =
+    process.env.CLIENT_URL ||
+    (process.env.NODE_ENV === 'production'
+      ? undefined
+      : 'http://localhost:5173');
+
+  if (!clientUrl) {
+    throw new Error('CLIENT_URL must be configured for email links');
+  }
+
+  return clientUrl;
+};
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -17,6 +31,15 @@ export const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
+
+  try {
+    await new Email(
+      newUser,
+      new URL('/login', getClientUrl()).toString(),
+    ).sendWelcome();
+  } catch (error) {
+    console.error('Welcome email could not be sent:', error.message);
+  }
 
   newUser.password = undefined;
 
@@ -157,31 +180,26 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createResetPasswordToken();
   await user.save({ validateBeforeSave: false });
 
-  //3) Send it to the user's email
-
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${resetToken}`;
-
-  const message = `Forgot your password? Submit a patch request with you new password and passwordConfirm to: ${resetURL}.\nIf you didn't forgot your password, please ignore this email!`;
-
   try {
-    await sendMail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 15 minutes)',
-      message,
-    });
+    const resetURL = new URL('/reset-password', getClientUrl());
+    resetURL.searchParams.set('token', resetToken);
+    await new Email(user, resetURL.toString()).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
-      message: ' Token sent to email!',
+      message: 'Password reset link sent to email.',
     });
   } catch (err) {
-    ((user.passwordResetToken = undefined),
-      (user.passwordRestExpires = undefined));
+    user.passwordResetToken = undefined;
+    user.passwordRestExpires = undefined;
 
     await user.save({ validateBeforeSave: false });
 
-    next(
-      new AppError('There was an error sending this mail. Try again later!'),
+    return next(
+      new AppError(
+        'There was an error sending this email. Please try again later.',
+        500,
+      ),
     );
   }
 });
