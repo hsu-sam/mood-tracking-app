@@ -3,8 +3,23 @@ import { Button } from "../../ui/Button";
 import { Input } from "../../ui/Input";
 
 import Avatar from "../../assets/images/avatar-lisa.jpg";
+import { useForm, type SubmitHandler } from "react-hook-form";
+
+type FormFields = {
+  fullName: string;
+};
 
 function Onboarding() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormFields>();
+
+  const onSubmit: SubmitHandler<FormFields> = (data) => {
+    console.log(data);
+  };
+
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-400 px-200 md:gap-600 md:px-500">
       <img src={Logo} alt="Mood Tracker" className="h-600" />
@@ -16,8 +31,21 @@ function Onboarding() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-300">
-          <Input label="Name" placeholder="Lisa Maria" />
+        <form
+          className="flex flex-col gap-300"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          <Input
+            label="Name"
+            placeholder="Lisa Maria"
+            error={errors.fullName?.message}
+            {...register("fullName", {
+              required: "Name is required.",
+              validate: (value) =>
+                value.trim().length > 0 || "Name cannot be blank.",
+            })}
+          />
           <div>
             <div className="flex items-start gap-250">
               <img
@@ -36,8 +64,8 @@ function Onboarding() {
               </div>
             </div>
           </div>
-          <Button>Start Tracking</Button>
-        </div>
+          <Button type="submit">Start Tracking</Button>
+        </form>
       </div>
     </div>
   );
