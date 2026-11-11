@@ -23,3 +23,11 @@ export const useForgotPassword = () => {
 export const useResetPassword = () => {
   useMutation({ mutationFn: resetPassword });
 };
+
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  return () => {
+    localStorage.removeItem("authToken");
+    queryClient.clear();
+  };
+};
