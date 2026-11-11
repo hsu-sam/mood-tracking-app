@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "build": "pnpm run build:js",
     "watchjs": "nodemon --watch . --ext js,pug app.js",
     "build:js": "node --check app.js"
   },
