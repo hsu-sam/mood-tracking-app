@@ -16,6 +16,8 @@ import hpp from 'hpp';
 
 import compression from 'compression';
 import { validateEmailConfiguration } from './utils/email.js';
+import swaggerUi from 'swagger-ui-express';
+import openApiSpec from './docs/openapi.js';
 
 const app = express();
 
@@ -86,6 +88,7 @@ app.use((req, res, next) => {
 app.use(compression());
 
 // ROUTES
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 app.get('/', (req, res) => {
   res.status(200).render('base');
 });
