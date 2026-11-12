@@ -216,6 +216,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
       message: 'Password reset link sent to email.',
     });
   } catch (err) {
+    console.error('Password reset email could not be sent:', err.message);
     user.passwordResetToken = undefined;
     user.passwordRestExpires = undefined;
 

@@ -1,5 +1,4 @@
 import { convert } from 'html-to-text';
-import nodemailer from 'nodemailer';
 import pug from 'pug';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,31 +36,18 @@ export class Email {
     this.to = user.email;
     this.fullName = user.fullName;
     this.url = url;
-    this.from = process.env.EMAIL_FROM
-      ? `Mood Tracker <${process.env.EMAIL_FROM}>`
-      : undefined;
+    this.fromEmail = process.env.EMAIL_FROM;
   }
 
-  createTransport() {
+  // Sends through SendGrid's HTTPS API (port 443) instead of SMTP (port 587):
+  // Render's free tier blocks outbound SMTP, which made sending hang and fail.
+  async send(template, subject) {
     const { SENDGRID_PASSWORD } = process.env;
 
-    if (!this.from || !SENDGRID_PASSWORD) {
+    if (!this.fromEmail || !SENDGRID_PASSWORD) {
       throw new Error('Email transport configuration is incomplete');
     }
 
-    return nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: {
-        user: 'apikey',
-        pass: SENDGRID_PASSWORD,
-      },
-    });
-  }
-
-  async send(template, subject) {
     const html = pug.renderFile(
       resolve(templatesDirectory, `${template}.pug`),
       {
@@ -71,13 +57,30 @@ export class Email {
       },
     );
 
-    await this.createTransport().sendMail({
-      from: this.from,
-      to: this.to,
-      subject,
-      html,
-      text: convert(html),
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${SENDGRID_PASSWORD}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: this.to }] }],
+        from: { email: this.fromEmail, name: 'Mood Tracker' },
+        subject,
+        content: [
+          { type: 'text/plain', value: convert(html) },
+          { type: 'text/html', value: html },
+        ],
+      }),
+      // Fail fast instead of leaving the request hanging.
+      signal: AbortSignal.timeout(10_000),
     });
+
+    if (!response.ok) {
+      throw new Error(
+        `SendGrid responded ${response.status}: ${await response.text()}`,
+      );
+    }
   }
 
   async sendWelcome() {
