@@ -21,4 +21,9 @@ export const resetPassword = async ({
   token,
   ...body
 }: ResetPasswordPayload & { token: string }) =>
-  (await api.post<MessageResponse>(`/auth/reset-password/${token}`, body)).data;
+  (
+    await api.patch<MessageResponse>(
+      `/v1/users/reset-password/${encodeURIComponent(token)}`,
+      body,
+    )
+  ).data;

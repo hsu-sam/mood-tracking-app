@@ -1,7 +1,11 @@
+import { Navigate, useNavigate, useSearchParams } from "react-router";
+import toast from "react-hot-toast";
 import Logo from "../../assets/icons/logo.svg";
 import { Button } from "../../ui/Button";
 import { Input } from "../../ui/Input";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { useResetPassword } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../services/getErrorMessage";
 
 type FormFields = {
   password: string;
@@ -9,6 +13,11 @@ type FormFields = {
 };
 
 function ResetPassword() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const { mutate: resetPassword, isPending } = useResetPassword();
+
   const {
     register,
     handleSubmit,
@@ -17,8 +26,22 @@ function ResetPassword() {
   } = useForm<FormFields>();
   const password = watch("password");
 
+  // No token in the URL means the user didn't arrive from the email link.
+  if (!token) return <Navigate to="/forgot-password" replace />;
+
   const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(data);
+    resetPassword(
+      { token, ...data },
+      {
+        onSuccess: ({ message }) => {
+          toast.success(message);
+          navigate("/login", { replace: true });
+        },
+        onError: (error) => {
+          toast.error(getErrorMessage(error));
+        },
+      },
+    );
   };
 
   return (
@@ -65,7 +88,12 @@ function ResetPassword() {
           </div>
 
           <div className="flex flex-col items-center gap-250">
-            <Button variant="primary" type="submit" className="w-full">
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full"
+              isLoading={isPending}
+            >
               Reset Password
             </Button>
           </div>

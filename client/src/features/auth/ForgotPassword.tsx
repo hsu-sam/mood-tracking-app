@@ -1,22 +1,36 @@
 import { NavLink } from "react-router";
+import toast from "react-hot-toast";
 import Logo from "../../assets/icons/logo.svg";
 import { Button } from "../../ui/Button";
 import { Input } from "../../ui/Input";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForgotPassword } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../services/getErrorMessage";
 
 type FormFields = {
   email: string;
 };
 
 function ForgotPassword() {
+  const { mutate: forgotPassword, isPending } = useForgotPassword();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(data);
+    forgotPassword(data, {
+      onSuccess: ({ message }) => {
+        toast.success(message);
+        reset();
+      },
+      onError: (error) => {
+        toast.error(getErrorMessage(error));
+      },
+    });
   };
 
   return (
@@ -50,7 +64,12 @@ function ForgotPassword() {
           />
 
           <div className="flex flex-col items-center gap-250">
-            <Button variant="primary" type="submit" className="w-full">
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full"
+              isLoading={isPending}
+            >
               Send Reset Link
             </Button>
 
