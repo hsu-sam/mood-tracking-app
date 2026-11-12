@@ -33,9 +33,10 @@ app.set('query parser', (queryString) =>
 );
 
 // MIDDLEWARE
-// CORS: allow the front-end origin(s). CLIENT_URL may be a comma-separated list.
-const allowedOrigins = (process.env.CLIENT_URL || '')
-  .split(',')
+// CORS: allow the front-end origin (CLIENT_URL, a single URL also used for email links)
+// plus any extra origins in CORS_ORIGINS (comma-separated, e.g. preview deploys or localhost).
+const allowedOrigins = [process.env.CLIENT_URL, ...(process.env.CORS_ORIGINS || '').split(',')]
+  .filter(Boolean)
   .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
 if (process.env.NODE_ENV !== 'production') {
