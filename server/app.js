@@ -61,7 +61,7 @@ app.use(
 // Security HTTP headers
 app.use(helmet());
 
-if (process.env.NODE_EVN === 'developement') {
+if (process.env.NODE_EVN === 'development') {
   app.use(morgan('dev'));
 }
 
@@ -143,5 +143,5 @@ async function startServer() {
 
 startServer().catch((error) => {
   console.error('Server startup failed:', error.message);
-  process.exitCode = 1;
+  process.exit(1);
 });
