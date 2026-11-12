@@ -7,6 +7,10 @@ export interface User {
   createdAt: string;
 }
 
+export interface OnboardingPayload {
+  fullName: string;
+}
+
 export interface MeResponse {
   status: "success" | "fail";
   data: { user: User };

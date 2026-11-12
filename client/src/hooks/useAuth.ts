@@ -1,5 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { login, signup, forgotPassword, resetPassword } from "../services/auth";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
+import {
+  login,
+  logout,
+  signup,
+  forgotPassword,
+  resetPassword,
+} from "../services/auth";
+import { completeOnboarding, uploadPhoto } from "../services/user";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -20,10 +29,37 @@ export const useForgotPassword = () =>
 export const useResetPassword = () =>
   useMutation({ mutationFn: resetPassword });
 
+export const useOnboarding = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      fullName,
+      photo,
+    }: {
+      fullName: string;
+      photo: File | null;
+    }) => {
+      if (photo) await uploadPhoto(photo);
+      return completeOnboarding({ fullName });
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(["user"], user);
+    },
+  });
+};
+
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  return () => {
-    localStorage.removeItem("authToken");
-    queryClient.clear();
-  };
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: ({ message }) => {
+      toast.success(message);
+    },
+    onSettled: () => {
+      localStorage.removeItem("authToken");
+      queryClient.clear();
+      navigate("/login", { replace: true });
+    },
+  });
 };

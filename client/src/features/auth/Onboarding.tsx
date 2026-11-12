@@ -1,23 +1,78 @@
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 import Logo from "../../assets/icons/logo.svg";
 import { Button } from "../../ui/Button";
 import { Input } from "../../ui/Input";
 
 import Avatar from "../../assets/images/avatar-lisa.jpg";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { useOnboarding } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../services/getErrorMessage";
 
 type FormFields = {
   fullName: string;
+  photo?: string;
 };
 
+// Must match the server's multer limits.
+const MAX_PHOTO_SIZE = 250 * 1024;
+const ALLOWED_PHOTO_TYPES = ["image/jpeg", "image/png"];
+
 function Onboarding() {
+  const navigate = useNavigate();
+  const { mutate: onboard, isPending } = useOnboarding();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+
+  // Free the preview's object URL when it changes or the page unmounts.
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormFields>();
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(data);
+  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    // Reset so picking the same file again still fires onChange.
+    event.target.value = "";
+    if (!file) return;
+
+    if (!ALLOWED_PHOTO_TYPES.includes(file.type)) {
+      setPhotoError("Photo must be a PNG or JPEG image.");
+      return;
+    }
+    if (file.size > MAX_PHOTO_SIZE) {
+      setPhotoError("Photo must not exceed 250KB.");
+      return;
+    }
+
+    setPhotoError(null);
+    setPhoto(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const onSubmit: SubmitHandler<FormFields> = ({ fullName }) => {
+    onboard(
+      { fullName: fullName.trim(), photo },
+      {
+        onSuccess: () => {
+          navigate("/home", { replace: true });
+        },
+        onError: (error) => {
+          toast.error(getErrorMessage(error));
+        },
+      },
+    );
   };
 
   return (
@@ -49,22 +104,40 @@ function Onboarding() {
           <div>
             <div className="flex items-start gap-250">
               <img
-                src={Avatar}
+                src={photoPreview ?? Avatar}
                 alt=""
-                className="h-auto w-[64px] rounded-full"
+                className="size-[64px] rounded-full object-cover"
               />
               <div className="gap-075 flex flex-col items-start">
                 <p className="text-preset-6-regular">Upload Image</p>
                 <p className="text-preset-7 text-neutral-600">
                   Max 250KB, PNG or JPEG
                 </p>
-                <Button variant="secondary" size="sm">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  className="hidden"
+                  onChange={handlePhotoChange}
+                />
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   Upload
                 </Button>
+                {photoError && (
+                  <p role="alert" className="text-preset-7 text-red-700">
+                    {photoError}
+                  </p>
+                )}
               </div>
             </div>
           </div>
-          <Button type="submit">Start Tracking</Button>
+          <Button type="submit" isLoading={isPending}>
+            Start Tracking
+          </Button>
         </form>
       </div>
     </div>

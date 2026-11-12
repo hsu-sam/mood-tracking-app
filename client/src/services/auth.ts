@@ -11,7 +11,10 @@ import type {
 export const login = async (body: LoginPayload) =>
   (await api.post<AuthResponse>("/v1/users/login", body)).data;
 
-export const signup = async (body: SignupPayload) =>
+export const logout = async () =>
+  (await api.post<MessageResponse>("/v1/users/logout")).data;
+
+export const signup =async (body: SignupPayload) =>
   (await api.post<MessageResponse>("/v1/users/signup", body)).data;
 
 export const forgotPassword = async (body: ForgotPasswordPayload) =>
