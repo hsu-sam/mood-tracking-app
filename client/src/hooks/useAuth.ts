@@ -12,17 +12,13 @@ export const useLogin = () => {
   });
 };
 
-export const useSignup = () => {
-  useMutation({ mutationFn: signup });
-};
+export const useSignup = () => useMutation({ mutationFn: signup });
 
-export const useForgotPassword = () => {
+export const useForgotPassword = () =>
   useMutation({ mutationFn: forgotPassword });
-};
 
-export const useResetPassword = () => {
+export const useResetPassword = () =>
   useMutation({ mutationFn: resetPassword });
-};
 
 export const useLogout = () => {
   const queryClient = useQueryClient();

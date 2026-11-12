@@ -23,6 +23,6 @@ export interface AuthResponse {
 }
 
 export interface MessageResponse {
-  success: boolean;
+  status: "success" | "fail";
   message: string;
 }

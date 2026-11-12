@@ -15,6 +15,7 @@ import ExpressMongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 
 import compression from 'compression';
+import cors from 'cors';
 import { validateEmailConfiguration } from './utils/email.js';
 import swaggerUi from 'swagger-ui-express';
 import openApiSpec from './docs/openapi.js';
@@ -32,6 +33,26 @@ app.set('query parser', (queryString) =>
 );
 
 // MIDDLEWARE
+// CORS: allow the front-end origin(s). CLIENT_URL may be a comma-separated list.
+const allowedOrigins = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:5173');
+}
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow non-browser clients (curl, Postman, server-to-server) with no Origin header
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(null, false);
+    },
+    credentials: true,
+  }),
+);
+
 // Security HTTP headers
 app.use(helmet());
 
