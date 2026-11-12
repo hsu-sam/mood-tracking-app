@@ -26,7 +26,14 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/onboarding" element={<Onboarding />} />
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute isOnboardingRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<PageNotFound />} />

@@ -18,7 +18,7 @@ export interface ResetPasswordPayload {
 }
 
 export interface AuthResponse {
-  success: boolean;
+  status: "success" | "fail";
   token: string;
 }
 
