@@ -1,4 +1,4 @@
-import Dashboard from "../features/home/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import Header from "./Header";
 import Main from "./Main";
 

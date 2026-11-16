@@ -31,7 +31,6 @@ function Container({ entry, quote }: ContainerProps) {
           <p className="text-preset-2">{entry.moodLabel}</p>
         </div>
 
-        {/* Emoji top-1/2 -right-45 -translate-y-1/2 */}
         <div className="flex md:absolute md:top-3/5 md:right-0 md:w-1/2 md:-translate-y-1/2">
           <img
             src={EMOJI[String(entry.mood)]}
@@ -40,7 +39,6 @@ function Container({ entry, quote }: ContainerProps) {
           />
         </div>
 
-        {/* Quote */}
         {quote && (
           <div className="relative z-10 flex flex-col items-center gap-150 md:col-start-1 md:row-start-2 md:mt-auto md:items-start md:pb-2">
             <img src={qoute} alt="" className="w-fit" />

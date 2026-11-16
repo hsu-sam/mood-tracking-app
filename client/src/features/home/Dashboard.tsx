@@ -2,7 +2,7 @@ import AverageMood from "../../components/AverageMood";
 import { useHomeState } from "../../hooks/useMood";
 import Container from "../../ui/Container";
 
-export default function Dashboard() {
+export default function DashboardMain() {
   const { state, isLoading, today } = useHomeState();
 
   if (isLoading) return null;
