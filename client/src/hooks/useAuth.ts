@@ -58,7 +58,7 @@ export const useUpdateMe = () => {
   });
 };
 
-export const useLogout =() => {
+export const useLogout = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({

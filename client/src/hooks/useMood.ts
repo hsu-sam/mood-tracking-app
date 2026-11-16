@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAverages, getRecent, getToday } from "../services/mood";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createMood, getAverages, getRecent, getToday } from "../services/mood";
 import type { HomeState } from "../types/mood";
 
 // Local calendar date (not UTC), since "today" is the user's day.
@@ -33,3 +33,12 @@ export function useHomeState() {
 
   return { state, isLoading, today: today.data, recent: recent.data };
 }
+
+export const useCreateMood = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createMood,
+    // Refreshes today, recent (chart) and averages in one go
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["mood"] }),
+  });
+};

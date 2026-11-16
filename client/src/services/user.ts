@@ -24,7 +24,7 @@ export const updateMe = async ({
   ).data.data.user;
 };
 
-export const uploadPhoto =async (photo: File) => {
+export const uploadPhoto = async (photo: File) => {
   const formData = new FormData();
   formData.append("photo", photo);
   // Override the default JSON content type, otherwise axios serializes the

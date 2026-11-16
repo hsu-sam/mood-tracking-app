@@ -34,3 +34,11 @@ export interface AveragesResponse {
 
 // empty: no entries ever · pending: none today · logged: logged today
 export type HomeState = "empty" | "pending" | "logged";
+
+export interface CreateMoodPayload {
+  entryDate: string;
+  mood: MoodValue;
+  feelings: string[];
+  sleepHours: SleepValue;
+  journal: string;
+}
