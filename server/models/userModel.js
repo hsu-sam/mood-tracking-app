@@ -73,12 +73,18 @@ const omit = (obj, fields) => {
   return obj;
 };
 
-// Default serialization (used by res.json): always strip internal fields.
 userSchema.set('toJSON', {
-  transform: (doc, ret) => omit(ret, INTERNAL_FIELDS),
+  transform: (doc, ret) => {
+    omit(ret, INTERNAL_FIELDS);
+
+    if (ret.photo?.startsWith('/') && process.env.SERVER_URL) {
+      ret.photo = new URL(ret.photo, process.env.SERVER_URL).toString();
+    }
+
+    return ret;
+  },
 });
 
-// Serialization for the user's own profile: also strip role and createdAt.
 userSchema.methods.toProfile = function () {
   return omit(this.toJSON(), ADMIN_ONLY_FIELDS);
 };
