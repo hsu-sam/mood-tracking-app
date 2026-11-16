@@ -8,7 +8,7 @@ import {
   forgotPassword,
   resetPassword,
 } from "../services/auth";
-import { completeOnboarding, uploadPhoto } from "../services/user";
+import { completeOnboarding, updateMe, uploadPhoto } from "../services/user";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -48,7 +48,17 @@ export const useOnboarding = () => {
   });
 };
 
-export const useLogout = () => {
+export const useUpdateMe = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateMe,
+    onSuccess: (user) => {
+      queryClient.setQueryData(["user"], user);
+    },
+  });
+};
+
+export const useLogout =() => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({

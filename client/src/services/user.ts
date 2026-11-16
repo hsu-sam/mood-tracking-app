@@ -7,7 +7,24 @@ export const getMe = async () =>
 export const completeOnboarding = async (body: OnboardingPayload) =>
   (await api.patch<MeResponse>("/v1/users/onboarding", body)).data.data.user;
 
-export const uploadPhoto = async (photo: File) => {
+export const updateMe = async ({
+  fullName,
+  photo,
+}: {
+  fullName?: string;
+  photo?: File | null;
+}) => {
+  const formData = new FormData();
+  if (fullName !== undefined) formData.append("fullName", fullName);
+  if (photo) formData.append("photo", photo);
+  return (
+    await api.patch<MeResponse>("/v1/users/update-me", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  ).data.data.user;
+};
+
+export const uploadPhoto =async (photo: File) => {
   const formData = new FormData();
   formData.append("photo", photo);
   // Override the default JSON content type, otherwise axios serializes the
