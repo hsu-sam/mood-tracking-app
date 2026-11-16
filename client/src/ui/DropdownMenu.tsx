@@ -36,7 +36,7 @@ export function DropdownMenu({
       <Menu as="div" className="relative inline-block">
         {/* Trigger */}
         <MenuButton
-          aria-label="Open account menu"
+          aria-label={`Account menu for ${name || "your account"}`}
           className={clsx(
             "group flex items-center gap-125",
             "outline-none focus-visible:ring-2",
@@ -69,10 +69,10 @@ export function DropdownMenu({
           {/* User information */}
           <div className="gap-025 flex flex-col items-start">
             <p className="text-preset-6">{name}</p>
-            <p className="text-preset-7 text-neutral-300">{email}</p>
+            <p className="text-preset-7 text-neutral-600">{email}</p>
           </div>
 
-          <MenuSeparator className="w-full border border-blue-100 bg-blue-100" />
+          <MenuSeparator className="w-full border border-blue-200 bg-blue-200" />
 
           {/* Settings */}
           <MenuItem>
@@ -85,7 +85,8 @@ export function DropdownMenu({
               className={clsx(
                 "flex w-full items-center gap-125",
                 "text-preset-7 text-neutral-900",
-                "transition-colors outline-none",
+                "rounded-6 py-075 px-100 transition-colors outline-none",
+                "data-focus:bg-blue-100",
               )}
             >
               <img
@@ -106,7 +107,8 @@ export function DropdownMenu({
               className={clsx(
                 "flex w-full items-center gap-125",
                 "text-preset-7 text-neutral-900",
-                "transition-colors outline-none",
+                "rounded-6 py-075 px-100 transition-colors outline-none",
+                "data-focus:bg-blue-100",
               )}
             >
               <img

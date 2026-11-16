@@ -45,10 +45,10 @@ export const TagCheckbox = forwardRef<HTMLSpanElement, TagCheckboxProps>(
           "px-250 py-150",
 
           // Default state
-          "border-blue-100 text-neutral-900",
+          "border-blue-200 text-neutral-900",
 
           // Checked state
-          "data-checked:border-blue-600",
+          "data-checked:border-blue-600 data-checked:bg-blue-100/50",
 
           // Focus
           "outline-none focus-visible:ring-2",
@@ -67,7 +67,7 @@ export const TagCheckbox = forwardRef<HTMLSpanElement, TagCheckboxProps>(
           className={clsx(
             "flex shrink-0 items-center justify-center",
             "rounded-4 border-2",
-            "border-blue-100 bg-white",
+            "border-neutral-400 bg-white",
             "transition-all duration-200",
             "group-data-checked:border-blue-600",
             "group-data-checked:bg-blue-600",

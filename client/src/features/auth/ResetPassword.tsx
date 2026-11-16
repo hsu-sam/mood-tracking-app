@@ -45,11 +45,15 @@ function ResetPassword() {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-400 px-200 md:gap-600 md:px-500">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen flex-col items-center justify-center gap-400 px-200 py-500 outline-none md:gap-600 md:px-500"
+    >
       <img src={Logo} alt="Mood Tracker" className="h-600" />
       <div className="bg-neutral-0 rounded-16 flex flex-col gap-400 px-250 py-500 md:w-132.5 md:px-400">
         <div className="flex flex-col gap-100">
-          <h3>Reset your Password?</h3>
+          <h1 className="text-preset-3">Reset your Password?</h1>
           <p className="text-preset-6-regular text-neutral-600">
             Enter your new your password.
           </p>
@@ -65,6 +69,7 @@ function ResetPassword() {
               label="New password"
               placeholder=""
               type="password"
+              autoComplete="new-password"
               error={errors.password?.message}
               {...register("password", {
                 required: "Password is required.",
@@ -78,6 +83,7 @@ function ResetPassword() {
               label="Confirm password"
               placeholder=""
               type="password"
+              autoComplete="new-password"
               error={errors.passwordConfirm?.message}
               {...register("passwordConfirm", {
                 required: "Please confirm your password.",
@@ -99,7 +105,7 @@ function ResetPassword() {
           </div>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -1,24 +1,24 @@
 @import "./base.css";
 
-h1 {
-  font-size: var(--text-preset-1);
-  font-weight: var(--text-preset-1--font-weight);
-  line-height: var(--text-preset-1--line-height);
-}
+/* In a layer so Tailwind utilities (e.g. text-preset-1-mobile) can override */
+@layer base {
+  h1 {
+    font-size: var(--text-preset-1);
+    font-weight: var(--text-preset-1--font-weight);
+    line-height: var(--text-preset-1--line-height);
+  }
 
-h2 {
-}
+  h3 {
+    font-size: var(--text-preset-3);
+    font-weight: var(--text-preset-3--font-weight);
+    line-height: var(--text-preset-3--line-height);
+  }
 
-h3 {
-  font-size: var(--text-preset-3);
-  font-weight: var(--text-preset-3--font-weight);
-  line-height: var(--text-preset-3--line-height);
-}
+  *:disabled {
+    cursor: not-allowed;
+  }
 
-*:disabled {
-  cursor: not-allowed;
-}
-
-img {
-  max-width: 100%;
+  img {
+    max-width: 100%;
+  }
 }

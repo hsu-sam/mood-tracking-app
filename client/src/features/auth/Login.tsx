@@ -34,11 +34,15 @@ function Login() {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-400 px-200 md:gap-600 md:px-500">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen flex-col items-center justify-center gap-400 px-200 py-500 outline-none md:gap-600 md:px-500"
+    >
       <img src={Logo} alt="Mood Tracker" className="h-600" />
       <div className="bg-neutral-0 rounded-16 flex flex-col gap-400 px-250 py-500 md:w-132.5 md:px-400">
         <div className="flex flex-col gap-100">
-          <h3>Welcome back!</h3>
+          <h1 className="text-preset-3">Welcome back!</h1>
           <p className="text-preset-6-regular text-neutral-600">
             Log in to continue tracking your mood and sleep.
           </p>
@@ -47,12 +51,14 @@ function Login() {
         <form
           className="flex flex-col gap-400"
           onSubmit={handleSubmit(onSubmit)}
+          noValidate
         >
           <div className="flex flex-col gap-250">
             <Input
               label="Email address"
               placeholder="name@mail.com"
               type="email"
+              autoComplete="email"
               error={errors.email?.message}
               {...register("email", {
                 required: "Email is required",
@@ -66,6 +72,7 @@ function Login() {
               label="Password"
               placeholder=""
               type="password"
+              autoComplete="current-password"
               error={errors.password?.message}
               {...register("password", {
                 required: "Password is required",
@@ -85,7 +92,10 @@ function Login() {
 
             <p className="text-preset-6-regular text-neutral-600">
               Haven't got an account?{" "}
-              <NavLink to="/signup" className="text-blue-600">
+              <NavLink
+                to="/signup"
+                className="text-blue-600 underline underline-offset-4"
+              >
                 Sign up.
               </NavLink>
             </p>
@@ -93,12 +103,12 @@ function Login() {
         </form>
         <NavLink
           to="/forgot-password"
-          className="text-preset-6-regular text-center text-blue-600"
+          className="text-preset-6-regular text-center text-blue-600 underline underline-offset-4"
         >
           Forgot your password?
         </NavLink>
       </div>
-    </div>
+    </main>
   );
 }
 

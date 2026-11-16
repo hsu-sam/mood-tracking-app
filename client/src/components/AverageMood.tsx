@@ -50,12 +50,12 @@ function AverageMood() {
     <div className="grid gap-400 lg:grid-cols-3">
       <div className="bg-neutral-0 rounded-16 col-span-2 flex flex-col gap-300 border border-blue-100 p-250 lg:col-span-1">
         <div className="flex flex-col gap-200">
-          <p className="text-preset-5">
+          <h2 className="text-preset-5">
             Average Mood{" "}
             <span className="text-preset-7 text-neutral-600">
               (Last 5 Check-ins)
             </span>
-          </p>
+          </h2>
           <div className="rounded-16 relative flex flex-col gap-150 overflow-hidden bg-blue-100 px-200 py-250">
             <div className="relative z-10 flex flex-col gap-150">
               {enoughMood ? (
@@ -83,12 +83,12 @@ function AverageMood() {
         </div>
 
         <div className="flex flex-col gap-200">
-          <p className="text-preset-5">
+          <h2 className="text-preset-5">
             Average Sleep{" "}
             <span className="text-preset-7 text-neutral-600">
               (Last 5 Check-ins)
             </span>
-          </p>
+          </h2>
           <div className="rounded-16 relative flex flex-col gap-150 overflow-hidden bg-blue-100 px-200 py-250">
             <div className="relative z-10 flex flex-col gap-150">
               {enoughMood && data?.current.sleep != null ? (

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useRecent } from "../hooks/useMood";
 import type { MoodEntry } from "../types/mood";
 import VeryHappy from "../assets/icons/icon-very-happy-color.svg";
@@ -59,6 +59,7 @@ function Bar({ entry, isOpen, onOpen, onClose, onToggle }: BarProps) {
   const barRef = useRef<HTMLButtonElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const [tipLeft, setTipLeft] = useState<number | null>(null);
+  const tipId = useId();
 
   // Place the tooltip beside the bar: right if it fits inside the chart,
   // else left, else clamped to the chart edges. Measured before paint.
@@ -101,6 +102,10 @@ function Bar({ entry, isOpen, onOpen, onClose, onToggle }: BarProps) {
           onClick={onToggle}
           onFocus={onOpen}
           onBlur={onClose}
+          onKeyDown={(e) =>
+            e.key === "Escape" && isOpen && (e.stopPropagation(), onClose())
+          }
+          aria-describedby={isOpen ? tipId : undefined}
           aria-label={`${entry.moodLabel}, ${entry.sleepLabel}, ${month} ${day}`}
           aria-expanded={isOpen}
           className={`${ui.bar} relative w-full max-w-10 cursor-pointer rounded-full`}
@@ -115,6 +120,7 @@ function Bar({ entry, isOpen, onOpen, onClose, onToggle }: BarProps) {
         {isOpen && (
           <div
             ref={tipRef}
+            id={tipId}
             role="tooltip"
             style={{
               left: tipLeft ?? 0,
@@ -142,8 +148,12 @@ function Bar({ entry, isOpen, onOpen, onClose, onToggle }: BarProps) {
           </div>
         )}
       </div>
-      <p className="text-preset-9 text-neutral-600">{month}</p>
-      <p className="text-preset-9 font-semibold">{day}</p>
+      <p aria-hidden="true" className="text-preset-9 text-neutral-600">
+        {month}
+      </p>
+      <p aria-hidden="true" className="text-preset-9 font-semibold">
+        {day}
+      </p>
     </li>
   );
 }
@@ -158,23 +168,41 @@ export default function MoodChart() {
     const close = (e: PointerEvent) => {
       if (!(e.target as HTMLElement).closest("[data-bar]")) setOpenId(null);
     };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenId(null);
     document.addEventListener("pointerdown", close);
-    return () => document.removeEventListener("pointerdown", close);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", onKey);
+    };
   }, [openId]);
 
   return (
-    <div data-chart className="flex flex-col gap-300">
-      <h2 className="md:text-preset-3 text-preset-3-mobile">
+    <section
+      data-chart
+      aria-labelledby="mood-chart-heading"
+      className="flex flex-col gap-300"
+    >
+      <h2
+        id="mood-chart-heading"
+        className="md:text-preset-3 text-preset-3-mobile"
+      >
         Mood and sleep trends
       </h2>
       <div className="flex gap-200">
-        <ul className="text-preset-9 flex h-60 flex-col justify-between text-neutral-600">
+        <ul
+          aria-label="Sleep hours scale"
+          className="text-preset-9 flex h-60 flex-col justify-between text-neutral-600"
+        >
           {SLEEP_AXIS.map((l) => (
             <li key={l}>{l}</li>
           ))}
         </ul>
         {!isLoading && (
-          <ul className="flex min-w-0 flex-1 items-end gap-150">
+          <ul
+            aria-label="Mood and sleep for your recent check-ins. Press a bar for details."
+            className="flex min-w-0 flex-1 items-end gap-150"
+          >
             {data?.map((e) => (
               <Bar
                 key={e._id}
@@ -190,6 +218,6 @@ export default function MoodChart() {
           </ul>
         )}
       </div>
-    </div>
+    </section>
   );
 }

@@ -35,7 +35,7 @@ const sizes: Record<InputSize, string> = {
 };
 
 const variants: Record<InputVariant, string> = {
-  default: "border border-neutral-300 bg-neutral-0",
+  default: "border border-neutral-400 bg-neutral-0",
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -71,7 +71,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <Label className="text-sm font-medium text-gray-700 data-disabled:opacity-50">
             {label}
-            {required && <span className="ml-1 text-red-500">*</span>}
+            {required && (
+              <span aria-hidden="true" className="ml-1 text-red-700">
+                *
+              </span>
+            )}
           </Label>
         )}
 
@@ -98,7 +102,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               variants[variant],
               sizes[size],
               hasError
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                ? "border-red-700 focus:border-red-700"
                 : "focus:border-neutral-600",
               startIcon && "pl-10",
               endIcon && "pr-10",
@@ -114,7 +118,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error ? (
-          <Description className="gap-075 text-preset-9 flex items-center text-red-700">
+          <Description
+            role="alert"
+            className="gap-075 text-preset-9 flex items-center text-red-700"
+          >
             <svg
               aria-hidden="true"
               width="12"

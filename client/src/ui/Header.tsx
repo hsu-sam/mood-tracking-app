@@ -10,7 +10,7 @@ function Header() {
 
   return (
     <header className="flex items-center justify-between">
-      <img src={Logo} alt="Logo" />
+      <img src={Logo} alt="Mood Tracker" />
 
       <DropdownMenu
         name={user?.fullName ?? ""}

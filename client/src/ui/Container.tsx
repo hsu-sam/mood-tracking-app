@@ -23,7 +23,13 @@ interface ContainerProps {
 
 function Container({ entry, quote }: ContainerProps) {
   return (
-    <section className="grid gap-400 lg:grid-cols-5">
+    <section
+      aria-labelledby="today-heading"
+      className="grid gap-400 lg:grid-cols-5"
+    >
+      <h2 id="today-heading" className="sr-only">
+        Today’s check-in
+      </h2>
       <div className="bg-neutral-0 rounded-16 relative col-span-3 grid min-w-0 flex-1 grid-cols-1 gap-400 overflow-hidden border border-blue-100 p-400 text-center md:min-h-85 md:grid-cols-[1fr_1fr] md:text-left">
         {/* Heading */}
         <div className="relative z-10 md:col-start-1 md:row-start-1">
@@ -51,7 +57,7 @@ function Container({ entry, quote }: ContainerProps) {
         <div className="bg-neutral-0 rounded-16 flex w-full flex-col gap-200 border border-blue-100 p-250">
           <div className="text-preset-6 flex items-center gap-150 text-neutral-600">
             <img src={Sleep} alt="" />
-            <p className="">Sleep</p>
+            <h3>Sleep</h3>
           </div>
           <p className="text-preset-3">{entry.sleepLabel}</p>
         </div>
@@ -59,14 +65,18 @@ function Container({ entry, quote }: ContainerProps) {
         <div className="bg-neutral-0 rounded-16 flex w-full flex-col gap-200 border border-blue-100 p-250">
           <div className="text-preset-6 flex items-center gap-150 text-neutral-600">
             <img src={Reflection} alt="" />
-            <p className="">Reflection of the day</p>
+            <h3>Reflection of the day</h3>
           </div>
 
           <div className="min-h-[80px] w-full">
             <p className="text-preset-6">{entry.journal}</p>
           </div>
 
-          <div className="flex items-center gap-150">
+          <div
+            aria-label="Feelings"
+            role="group"
+            className="flex items-center gap-150"
+          >
             {entry.feelings.map((f) => (
               <p key={f} className="text-preset-6-italic">
                 #{f}

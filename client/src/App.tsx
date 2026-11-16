@@ -8,10 +8,12 @@ import ForgotPassword from "./features/auth/ForgotPassword";
 import ResetPassword from "./features/auth/ResetPassword";
 import AppLayout from "./ui/AppLayout";
 import ProtectedRoute from "./ui/ProtectedRoute";
+import RouteA11y from "./ui/RouteA11y";
 
 function App() {
   return (
     <BrowserRouter>
+      <RouteA11y />
       <Routes>
         <Route
           element={

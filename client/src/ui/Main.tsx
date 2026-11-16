@@ -17,6 +17,9 @@ const formatToday = (d = new Date()) => {
   return `${weekday}, ${month} ${ordinal(d.getDate())}, ${d.getFullYear()}`;
 };
 
+const localISO = (d = new Date()) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
 function Main() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUser();
@@ -24,7 +27,7 @@ function Main() {
   const firstName = user?.fullName?.trim().split(/\s+/)[0];
 
   return (
-    <main className="flex flex-col gap-800">
+    <div className="flex flex-col gap-800">
       <div className="flex flex-col items-center gap-125">
         <p className="md:text-preset-3 text-preset-3-mobile text-blue-600">
           Hello, {firstName}!
@@ -34,7 +37,9 @@ function Main() {
           How are you feeling today?
         </h1>
 
-        <p className="text-preset-6 text-neutral-600">{formatToday()}</p>
+        <p className="text-preset-6 text-neutral-600">
+          <time dateTime={localISO()}>{formatToday()}</time>
+        </p>
       </div>
 
       {!isLoading && state !== "logged" && (
@@ -50,7 +55,7 @@ function Main() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    </main>
+    </div>
   );
 }
 

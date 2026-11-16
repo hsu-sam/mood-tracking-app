@@ -109,6 +109,7 @@ function Settings({ isOpen, onClose }: SettingsModalProps) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-300">
           <Input
             label="Name"
+            autoComplete="name"
             placeholder="Lisa Maria"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -141,14 +142,18 @@ function Settings({ isOpen, onClose }: SettingsModalProps) {
                     variant="secondary"
                     size="sm"
                     className="w-fit"
+                    aria-label="Upload profile photo"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     Upload
                   </Button>
+                  <p role="status" className="sr-only">
+                    {photo ? `Selected photo: ${photo.name}` : ""}
+                  </p>
                   {photoError && (
                     <div
                       role="alert"
-                      className="text-preset-9 gap-075 flex items-center text-red-500"
+                      className="text-preset-9 gap-075 flex items-center text-red-700"
                     >
                       <svg
                         aria-hidden="true"

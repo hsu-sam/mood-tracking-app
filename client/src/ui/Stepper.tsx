@@ -21,8 +21,12 @@ export function Stepper({
       style={{
         gridTemplateColumns: `repeat(${steps}, minmax(0, 1fr))`,
       }}
-      role="group"
-      aria-label={`Step ${currentStep} of ${steps}`}
+      role="progressbar"
+      aria-label="Progress"
+      aria-valuemin={1}
+      aria-valuemax={steps}
+      aria-valuenow={currentStep}
+      aria-valuetext={`Step ${currentStep} of ${steps}`}
     >
       {Array.from({ length: steps }, (_, index) => {
         const stepNumber = index + 1;
@@ -31,6 +35,7 @@ export function Stepper({
         return (
           <div
             key={stepNumber}
+            aria-hidden="true"
             className={clsx(
               "h-075 rounded-full transition-colors duration-300",
               isActive ? activeColor : inactiveColor,

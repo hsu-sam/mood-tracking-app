@@ -76,11 +76,15 @@ function Onboarding() {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-400 px-200 md:gap-600 md:px-500">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex min-h-screen flex-col items-center justify-center gap-400 px-200 py-500 outline-none md:gap-600 md:px-500"
+    >
       <img src={Logo} alt="Mood Tracker" className="h-600" />
       <div className="bg-neutral-0 rounded-16 flex flex-col gap-400 px-250 py-500 md:px-400">
         <div className="flex flex-col gap-100">
-          <h3>Personalize your experience</h3>
+          <h1 className="text-preset-3">Personalize your experience</h1>
           <p className="text-preset-6-regular text-neutral-600">
             Add your name and a profile picture to make Mood yours.
           </p>
@@ -93,6 +97,7 @@ function Onboarding() {
         >
           <Input
             label="Name"
+            autoComplete="name"
             placeholder="Lisa Maria"
             error={errors.fullName?.message}
             {...register("fullName", {
@@ -123,10 +128,14 @@ function Onboarding() {
                 <Button
                   variant="secondary"
                   size="sm"
+                  aria-label="Upload profile photo"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   Upload
                 </Button>
+                <p role="status" className="sr-only">
+                  {photo ? `Selected photo: ${photo.name}` : ""}
+                </p>
                 {photoError && (
                   <p role="alert" className="text-preset-7 text-red-700">
                     {photoError}
@@ -140,7 +149,7 @@ function Onboarding() {
           </Button>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -13,6 +13,8 @@
   --color-neutral-900: #21214d;
   --color-neutral-600: #57577b;
   --color-neutral-300: #9393b7;
+  /* >= 3:1 on white: use for form-control / checkbox borders (WCAG 1.4.11) */
+  --color-neutral-400: #767698;
   --color-neutral-200: #cbcdd0;
   --color-neutral-0: #ffffff;
 
@@ -171,6 +173,39 @@
 
   button {
     @apply cursor-pointer;
+  }
+
+  /* Visible keyboard focus everywhere, even on elements without custom styles */
+  :focus-visible {
+    outline: 2px solid var(--color-blue-600);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Visible on focus: lets keyboard users jump past the header */
+@utility skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--color-neutral-900);
+  color: white;
+  font-weight: 600;
+  &:focus {
+    top: 1rem;
   }
 }
 

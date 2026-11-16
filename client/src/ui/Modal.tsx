@@ -67,9 +67,9 @@ export function Modal({
                   <button
                     type="button"
                     onClick={onClose}
-                    aria-label="Close modal"
+                    aria-label="Close"
                     className={clsx(
-                      "self-end text-neutral-300",
+                      "-m-2 self-end rounded-full p-2 text-neutral-600",
                       "transition-colors hover:text-neutral-900",
                       "focus-visible:outline-none",
                       "focus-visible:ring-2 focus-visible:ring-blue-600",
