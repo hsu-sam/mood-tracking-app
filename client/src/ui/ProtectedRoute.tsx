@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Navigate } from "react-router";
 import { useUser } from "../features/auth/useUser";
+import Spinner from "./Spinner";
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -13,7 +14,12 @@ function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { isLoading, isAuthenticated, needsOnboarding } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
 
