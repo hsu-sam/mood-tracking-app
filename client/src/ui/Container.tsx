@@ -24,7 +24,7 @@ interface ContainerProps {
 function Container({ entry, quote }: ContainerProps) {
   return (
     <section className="grid gap-400 lg:grid-cols-5">
-      <div className="bg-neutral-0 rounded-16 relative col-span-3 grid min-w-0 flex-1 grid-cols-1 overflow-hidden border border-blue-100 p-400 text-center md:min-h-85 md:grid-cols-[1fr_1fr] md:text-left">
+      <div className="bg-neutral-0 rounded-16 relative col-span-3 grid min-w-0 flex-1 grid-cols-1 gap-400 overflow-hidden border border-blue-100 p-400 text-center md:min-h-85 md:grid-cols-[1fr_1fr] md:text-left">
         {/* Heading */}
         <div className="relative z-10 md:col-start-1 md:row-start-1">
           <p className="text-preset-3 text-neutral-300">I’m feeling</p>

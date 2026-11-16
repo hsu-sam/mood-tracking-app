@@ -164,7 +164,9 @@ export default function MoodChart() {
 
   return (
     <div data-chart className="flex flex-col gap-300">
-      <h2 className="text-preset-3">Mood and sleep trends</h2>
+      <h2 className="md:text-preset-3 text-preset-3-mobile">
+        Mood and sleep trends
+      </h2>
       <div className="flex gap-200">
         <ul className="text-preset-9 flex h-60 flex-col justify-between text-neutral-600">
           {SLEEP_AXIS.map((l) => (

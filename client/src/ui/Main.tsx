@@ -26,9 +26,13 @@ function Main() {
   return (
     <main className="flex flex-col gap-800">
       <div className="flex flex-col items-center gap-125">
-        <p className="text-preset-3 text-blue-600">Hello, {firstName}!</p>
+        <p className="md:text-preset-3 text-preset-3-mobile text-blue-600">
+          Hello, {firstName}!
+        </p>
 
-        <h1 className="">How are you feeling today?</h1>
+        <h1 className="text-preset-1-mobile md:text-preset-1 text-center">
+          How are you feeling today?
+        </h1>
 
         <p className="text-preset-6 text-neutral-600">{formatToday()}</p>
       </div>
