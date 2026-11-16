@@ -45,13 +45,11 @@ export const signup = catchAsync(async (req, res, next) => {
     console.error('Welcome email could not be sent:', error.message);
   }
 
-  newUser.password = undefined;
-
   res.status(201).json({
     status: 'success',
     message: 'User created successfully',
     data: {
-      user: newUser,
+      user: newUser.toProfile(),
     },
   });
 });
@@ -131,7 +129,7 @@ export const onboarding = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: { user },
+    data: { user: user.toProfile() },
   });
 });
 

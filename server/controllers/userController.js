@@ -64,7 +64,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
-      user: updatedUser,
+      user: updatedUser.toProfile(),
     },
   });
 });
@@ -73,7 +73,7 @@ export const getMe = (req, res) => {
   res.status(200).json({
     status: 'success',
     data: {
-      user: req.user,
+      user: req.user.toProfile(),
     },
   });
 };

@@ -3,8 +3,8 @@ export interface User {
   email: string;
   fullName?: string;
   photo?: string;
-  role: "user" | "admin";
-  createdAt: string;
+  role?: "user" | "admin";
+  createdAt?: string;
 }
 
 export interface OnboardingPayload {

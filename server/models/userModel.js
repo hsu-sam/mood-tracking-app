@@ -54,6 +54,35 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// Internal/security fields that must never leave the server.
+const INTERNAL_FIELDS = [
+  'passwordResetToken',
+  'passwordRestExpires',
+  'passwordChangedAt',
+  'tokenVersion',
+  'password',
+  'passwordConfirm',
+  '__v',
+];
+
+// Fields only admin-facing endpoints need.
+const ADMIN_ONLY_FIELDS = ['role', 'createdAt'];
+
+const omit = (obj, fields) => {
+  fields.forEach((field) => delete obj[field]);
+  return obj;
+};
+
+// Default serialization (used by res.json): always strip internal fields.
+userSchema.set('toJSON', {
+  transform: (doc, ret) => omit(ret, INTERNAL_FIELDS),
+});
+
+// Serialization for the user's own profile: also strip role and createdAt.
+userSchema.methods.toProfile = function () {
+  return omit(this.toJSON(), ADMIN_ONLY_FIELDS);
+};
+
 userSchema.pre('save', async function () {
   // Only hash the password if it was modified
   if (!this.isModified('password')) return;
