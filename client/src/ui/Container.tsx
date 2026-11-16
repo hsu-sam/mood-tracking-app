@@ -23,7 +23,7 @@ interface ContainerProps {
 
 function Container({ entry, quote }: ContainerProps) {
   return (
-    <section className="grid grid-cols-5 gap-400">
+    <section className="grid gap-400 lg:grid-cols-5">
       <div className="bg-neutral-0 rounded-16 relative col-span-3 grid min-w-0 flex-1 grid-cols-1 overflow-hidden border border-blue-100 p-400 text-center md:min-h-85 md:grid-cols-[1fr_1fr] md:text-left">
         {/* Heading */}
         <div className="relative z-10 md:col-start-1 md:row-start-1">
@@ -49,8 +49,8 @@ function Container({ entry, quote }: ContainerProps) {
         )}
       </div>
 
-      <div className="col-span-2 flex flex-col gap-250">
-        <div className="bg-neutral-0 rounded-16 flex flex-col gap-200 border border-blue-100 p-250">
+      <div className="col-span-3 flex w-full flex-col gap-250 lg:col-span-2">
+        <div className="bg-neutral-0 rounded-16 flex w-full flex-col gap-200 border border-blue-100 p-250">
           <div className="text-preset-6 flex items-center gap-150 text-neutral-600">
             <img src={Sleep} alt="" />
             <p className="">Sleep</p>
@@ -58,7 +58,7 @@ function Container({ entry, quote }: ContainerProps) {
           <p className="text-preset-3">{entry.sleepLabel}</p>
         </div>
 
-        <div className="bg-neutral-0 rounded-16 flex flex-col gap-200 border border-blue-100 p-250">
+        <div className="bg-neutral-0 rounded-16 flex w-full flex-col gap-200 border border-blue-100 p-250">
           <div className="text-preset-6 flex items-center gap-150 text-neutral-600">
             <img src={Reflection} alt="" />
             <p className="">Reflection of the day</p>

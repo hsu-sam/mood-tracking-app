@@ -47,8 +47,8 @@ function AverageMood() {
     : null;
 
   return (
-    <div className="grid grid-cols-3 gap-400">
-      <div className="bg-neutral-0 rounded-16 flex flex-col gap-300 border border-blue-100 p-250">
+    <div className="grid gap-400 lg:grid-cols-3">
+      <div className="bg-neutral-0 rounded-16 col-span-2 flex flex-col gap-300 border border-blue-100 p-250 lg:col-span-1">
         <div className="flex flex-col gap-200">
           <p className="text-preset-5">
             Average Mood{" "}
