@@ -100,7 +100,16 @@ app.use(
   }),
 );
 
-app.use('/img/users', express.static(path.join(publicDirectory, 'img/users')));
+// The client is hosted on a different origin, so helmet's default
+// `Cross-Origin-Resource-Policy: same-origin` would block these images.
+app.use(
+  '/img/users',
+  (req, res, next) => {
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
+  express.static(path.join(publicDirectory, 'img/users')),
+);
 
 app.use('/api', limiter);
 
